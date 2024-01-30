@@ -1,0 +1,17 @@
+.testbutton {
+    font-family: arial;
+    color: #000000 !important;
+    font-size: 20px;
+    text-shadow: 1px 1px 0px #DEDEDE;
+    box-shadow: 1px 1px 1px #BEE2F9;
+    padding: 10px 25px;
+    border-radius: 10px;
+    border: 2px solid #000000;
+    background: #6964EE;
+  }
+  .testbutton:hover {
+    color: #14396A !important;
+    background: #468CCF;
+    background: linear-gradient(to top, #468CCF, #63B8EE);
+  }
+  /* design for a button  */

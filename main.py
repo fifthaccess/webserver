@@ -1,9 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI , Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
 import uvicorn
 from app_secrets import my_secret
 import requests
 app = FastAPI()
+
+templates = Jinja2Templates(directory= "templates")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/items/", response_class=HTMLResponse)
@@ -30,6 +37,16 @@ async def redirect(code):
 @app.get("/end/")
 async def the_end():
     return {"the_End"}
+
+
+@app.get("/jinja/", response_class=HTMLResponse)
+async def jinja(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="child.j2"
+    )
+
+
+
 
 if __name__ == '__main__':
     uvicorn.run(app, port=8080, host='0.0.0.0')
