@@ -15,7 +15,7 @@
 import requests
 
 # Send a GET request to the initial URL
-initial_url = "https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id=272bc9be7187170fc76cebf13f8c69e7d9f66113632b3f53a664e98c3ac31a1e&redirect_uri=http://appserver-fa.westeurope.cloudapp.azure.com/&response_type=code&state=STATE&scope=api"
+initial_url = "https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id=272bc9be7187170fc76cebf13f8c69e7d9f66113632b3f53a664e98c3ac31a1e&redirect_uri=http://appserver-fa.westeurope.cloudapp.azure.com:8080/redirect/&response_type=code&state=STATE&scope=api"
 response = requests.get(initial_url, allow_redirects=False)
 
 # Check if the request was successful
