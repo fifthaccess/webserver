@@ -1,0 +1,1 @@
+ssh -i ~/.ssh/gl_gitserver.pem gl@108.143.49.216

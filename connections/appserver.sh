@@ -1,0 +1,1 @@
+ssh -i ~/.ssh/gl_appserver.pem gl@20.224.241.203
