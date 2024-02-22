@@ -46,9 +46,8 @@ async def login_google():
 
 
 @app.get("/auth/gitlab")
-async def auth_google(request: Response):
-    await debugRequest(request)
-    
+async def auth_google(request: Request):
+    code = request.query_params.get("code")
     token_url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/token?client_id={gitlab_dict['client_id']}&client_secret={gitlab_dict['client_secret']}&code={code}&grant_type={gitlab_dict['grant_type']}&redirect_uri={gitlab_dict['redirect_uri']}"
     response2 = requests.post(token_url)
     await response2
@@ -58,10 +57,11 @@ async def auth_google(request: Response):
     #    "https://gitserver.westeurope.cloudapp.azure.com/api/v4/user",
     #    headers={"Authorization": f"Bearer {access_token}"},
     # )
-
-    request.set_cookie(key="token", value=access_token)
-
-    return templates.TemplateResponse(request=request, name="index.j2")
+    
+    tempRes = templates.TemplateResponse(request=request, name="index.j2")
+    tempRes.set_cookie(key="token", value=access_token)
+    return tempRes
+    
 
 
 @app.get("/")
