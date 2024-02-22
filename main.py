@@ -26,18 +26,12 @@ gitlab_dict = {
     "grant_type": "authorization_code",
 }
 
-
-async def debugRequest (request:Request):  
-    print(request.url)
-    print(request.headers)
-    print(await request.body())
-    print(request.cookies)
-    
-
 def getLoginUrl():
     url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id={gitlab_dict['client_id']}&redirect_uri={gitlab_dict['redirect_uri']}&response_type={gitlab_dict['response_type']}&state={gitlab_dict['state']}&scope={gitlab_dict['scope']}"
     return url
 
+def getToken(request: Request):
+    return request.cookies.get("token")
 
 @app.get("/login/gitlab")
 async def login_google():
@@ -50,31 +44,24 @@ async def auth_google(request: Request):
     code = request.query_params.get("code")
     token_url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/token?client_id={gitlab_dict['client_id']}&client_secret={gitlab_dict['client_secret']}&code={code}&grant_type={gitlab_dict['grant_type']}&redirect_uri={gitlab_dict['redirect_uri']}"
     response2 = requests.post(token_url)
-    await response2
-    access_token = json.loads(response2.content.decode("utf-8"))["access_token"]
+    token = json.loads(response2.content.decode("utf-8"))["access_token"]
 
-    # user_info = requests.get(
-    #    "https://gitserver.westeurope.cloudapp.azure.com/api/v4/user",
-    #    headers={"Authorization": f"Bearer {access_token}"},
-    # )
-    
-    tempRes = templates.TemplateResponse(request=request, name="index.j2")
-    tempRes.set_cookie(key="token", value=access_token)
+    tempRes = templates.TemplateResponse(request=request, name="index.j2",context={"token": token})
+    tempRes.set_cookie(key="token", value=token)
     return tempRes
-    
 
 
 @app.get("/")
 async def index(request: Request, token=Cookie(default=None)):
-
     if token:
-        return templates.TemplateResponse(request=request, name="index.j2")
+        getProjects(token)
+        return templates.TemplateResponse(request=request, name="index.j2",context={"token": token})
     else:
         url = getLoginUrl()
         return RedirectResponse(url=url)
 
 
-def outh(token):
+def getProjects(token):
     gl = gitlab.Gitlab(
         "https://gitserver.westeurope.cloudapp.azure.com", oauth_token=token
     )
