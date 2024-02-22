@@ -54,8 +54,8 @@ async def auth_google(request: Request):
 @app.get("/")
 async def index(request: Request, token=Cookie(default=None)):
     if token:
-        getProjects(token)
-        return templates.TemplateResponse(request=request, name="index.j2",context={"token": token})
+        projects = getProjects(token)
+        return templates.TemplateResponse(request=request, name="index.j2",context={"token": token,"projects": projects})
     else:
         url = getLoginUrl()
         return RedirectResponse(url=url)
@@ -68,7 +68,6 @@ def getProjects(token):
     gl.auth()
 
     projects = gl.projects.list(get_all=True)
-    print(projects)
     return projects
 
 

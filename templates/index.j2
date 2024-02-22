@@ -1,6 +1,6 @@
 {% extends "base.j2" %}
 
-{% block title %}Child{% endblock %}
+{% block title %}IndexPage{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -12,10 +12,14 @@
 {% endblock %}
 
 
-
 {% block content %}
 <h1>Index</h1>
 
 <h3>Your Token is: {{ token }}</h3>
-
+<h3>Your projects are:</h3>
+<ul>
+   {% for project in projects %}
+        <li><a href="{{ project.web_url }}">{{ project.path_with_namespace }}</a></li>
+    {% endfor %}
+</ul>
 {% endblock %}
