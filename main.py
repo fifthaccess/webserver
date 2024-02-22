@@ -1,8 +1,10 @@
+from ctypes import Union
 from typing import Annotated
 from fastapi import FastAPI, Request, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi import Cookie
 from gitlab import gitlab
 
 import json
@@ -10,7 +12,6 @@ import uvicorn
 import requests
 
 from app_secrets import my_secret
-
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -28,9 +29,14 @@ gitlab_dict = {
 }
 
 
+def getLoginUrl():
+    url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id={gitlab_dict['client_id']}&redirect_uri={gitlab_dict['redirect_uri']}&response_type={gitlab_dict['response_type']}&state={gitlab_dict['state']}&scope={gitlab_dict['scope']}"
+    return url
+
+
 @app.get("/login/gitlab")
 async def login_google():
-    url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id={gitlab_dict['client_id']}&redirect_uri={gitlab_dict['redirect_uri']}&response_type={gitlab_dict['response_type']}&state={gitlab_dict['state']}&scope={gitlab_dict['scope']}"
+    url = getLoginUrl()
     return RedirectResponse(url=url)
 
 
@@ -52,11 +58,12 @@ async def auth_google(request: Response):
 
 
 @app.get("/")
-async def index(request: Request, token: Optional[str] = Cookie(None)):
+async def index(request: Request, token=Cookie(default=None)):
     if token:
-        login_google()  # interessanter name
-    else:
         return templates.TemplateResponse(request=request, name="index.j2")
+    else:
+        url = getLoginUrl()
+        return RedirectResponse(url=url)
 
 
 def outh(token):
