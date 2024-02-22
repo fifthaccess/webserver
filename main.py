@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse ,HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import Cookie
@@ -34,32 +34,36 @@ def getToken(request: Request):
     return request.cookies.get("token")
 
 @app.get("/login/gitlab")
-async def login_google():
+async def login_gitlab():
     url = getLoginUrl()
     return RedirectResponse(url=url)
 
 
 @app.get("/auth/gitlab")
-async def auth_google(request: Request):
+async def auth_gitlab(request: Request):
     code = request.query_params.get("code")
     token_url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/token?client_id={gitlab_dict['client_id']}&client_secret={gitlab_dict['client_secret']}&code={code}&grant_type={gitlab_dict['grant_type']}&redirect_uri={gitlab_dict['redirect_uri']}"
     response2 = requests.post(token_url)
     token = json.loads(response2.content.decode("utf-8"))["access_token"]
 
-    tempRes = templates.TemplateResponse(request=request, name="index.j2",context={"token": token})
+    tempRes = templates.TemplateResponse(request=request, name="Projekts.j2",context={"token": token})
     tempRes.set_cookie(key="token", value=token)
-    return tempRes
+    return RedirectResponse(url="/projects")
 
 
-@app.get("/")
+@app.get("/projects")
 async def index(request: Request, token=Cookie(default=None)):
     if token:
         projects = getProjects(token)
-        return templates.TemplateResponse(request=request, name="index.j2",context={"token": token,"projects": projects})
+        return templates.TemplateResponse(request=request, name="Projekts.j2",context={"token": token,"projects": projects})
     else:
         url = getLoginUrl()
         return RedirectResponse(url=url)
 
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request, token=Cookie(default=None)):
+    
+        return templates.TemplateResponse(request=request, name="index.j2")
 
 def getProjects(token):
     gl = gitlab.Gitlab(
@@ -68,6 +72,7 @@ def getProjects(token):
     gl.auth()
 
     projects = gl.projects.list(get_all=True)
+    print(projects)
     return projects
 
 
