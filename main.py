@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import Cookie
 from gitlab import gitlab
-
+ 
 import json
 import uvicorn
 import requests
@@ -27,6 +27,13 @@ gitlab_dict = {
 }
 
 
+async def debugRequest (request:Request):  
+    print(request.url)
+    print(request.headers)
+    print(await request.body())
+    print(request.cookies)
+    
+
 def getLoginUrl():
     url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/authorize?client_id={gitlab_dict['client_id']}&redirect_uri={gitlab_dict['redirect_uri']}&response_type={gitlab_dict['response_type']}&state={gitlab_dict['state']}&scope={gitlab_dict['scope']}"
     return url
@@ -40,6 +47,8 @@ async def login_google():
 
 @app.get("/auth/gitlab")
 async def auth_google(request: Response):
+    await debugRequest(request)
+    
     token_url = f"https://gitserver.westeurope.cloudapp.azure.com/oauth/token?client_id={gitlab_dict['client_id']}&client_secret={gitlab_dict['client_secret']}&code={code}&grant_type={gitlab_dict['grant_type']}&redirect_uri={gitlab_dict['redirect_uri']}"
     response2 = requests.post(token_url)
     await response2
@@ -57,6 +66,7 @@ async def auth_google(request: Response):
 
 @app.get("/")
 async def index(request: Request, token=Cookie(default=None)):
+
     if token:
         return templates.TemplateResponse(request=request, name="index.j2")
     else:
