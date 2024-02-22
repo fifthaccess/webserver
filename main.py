@@ -1,7 +1,5 @@
-from ctypes import Union
-from typing import Annotated
-from fastapi import FastAPI, Request, Depends, HTTPException, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import Cookie
