@@ -1,4 +1,4 @@
-.testbutton {
+/* .testbutton {
     font-family: arial;
     color: #000000 !important;
     font-size: 20px;
@@ -13,5 +13,62 @@
     color: #14396A !important;
     background: #468CCF;
     background: linear-gradient(to top, #468CCF, #63B8EE);
-  }
+  } */
   /* design for a button  */
+
+  /* :root {
+    --white: white;
+    --black: black;
+  } */
+  h1 {
+    color: green;
+  }
+  
+  
+  body {
+      background-color: #ffe100;
+    }
+    
+  .heading {
+    text-align: center;
+    object-fit: fill;
+    font-size: 45px;
+    font-style: normal;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .section {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+  }
+  
+  .paragraph {
+    text-align: center;
+  }
+  
+
+  
+  .section-2 {
+    text-align: left;
+    display: flex;
+  }
+  
+  .button {
+    flex: 0 auto;
+    order: 0;
+    justify-content: flex-start;
+    display: flex;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+  }
+  
+  .button-2 {
+    direction: ltr;
+    text-align: center;
+    text-transform: none;
+    border-radius: 20px;
+    text-decoration: none;
+  }
+  
