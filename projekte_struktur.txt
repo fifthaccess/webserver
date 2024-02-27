@@ -1,0 +1,3 @@
+gruppe:Klassen name (alle member) zb 5BHWII
+    untergruppe: Schülername(schüler(1) und lehrer[vererbt]) zb Benedikt Erkner-Sacherl
+        projekte der Schüler (schüler(n) und Lehrer[vererbt]) zb my test Pro
