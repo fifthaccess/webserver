@@ -1,0 +1,21 @@
+{% extends "base.j2" %}
+
+{% block title %}User{% endblock %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+
+{% block content %}
+<h1>Mein Profil</h1>
+
+<h3>Your Token is: {{ token }}</h3>
+<h3>You are:</h3>
+<ul>
+    <li><a> Name: {{user["name"]}} </a></li>
+    <li><a> ID: {{user["id"]}} </a></li>
+    <li><a> Adminstatus: {{user["is_admin"]}} </a></li>
+</ul>
+{% endblock %}
