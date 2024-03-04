@@ -56,7 +56,7 @@ def getToken(request: Request):
     except:
         print("an error has happend")
         pass
-        #raise RequiresLoginException
+        raise RequiresLoginException
 
     if (time.time() - session_creation_time) > session_lifetime:
          sessions.pop(int(session_id))
@@ -123,6 +123,38 @@ def create_session(token):
     sessions[session_id] = session #finished dict
     return session_id
 
+def create_groups(token, groups):
+    gl = gitlab.Gitlab(
+        gitlab_dict["gitlab_server_url"], oauth_token=token
+    )
+    existing_group = gl.groups.list(search=groups["name"])
+    print(existing_group[0].name)
+    print()
+    existing = False
+    for ex_groups in existing_group:
+        if ex_groups.name == groups["name"]:
+            existing = True
+        
+
+    # try: 
+    if existing == False:
+        group = gl.groups.create({'name': groups["name"], 'path': groups["name"]})
+        print(group.get_id())
+    #subgroup = gl.groups.create({'name': 'subgroup1', 'path': 'subgroup1', 'parent_id': group.get_id()})
+        for name in groups["members"]:
+            
+            user = gl.users.list(search=name)
+            subgroup = gl.groups.create({'name': name, 'path': name, 'parent_id': group.get_id()})
+            print(user)
+            member = subgroup.members.create({'user_id': user[0].id,
+                                'access_level': gitlab.const.AccessLevel.OWNER})
+            return "Groups created"
+    else: 
+        return "Groups already exist"
+
+    # except:
+    #     return "Groups"
+
 
 #____________________________________________________________________________________App Exeptions Handler_____________________________________________________________________________________________________________________________________________________________________________________
 
@@ -177,7 +209,14 @@ async def index(request: Request, token: str = Depends(getToken)):  # token=Cook
     projects = getProjects(token)
     return templates.TemplateResponse(request=request, name="Projekts.j2",context={"token": token,"projects": projects})
 
-
+@app.get("/group")
+async def index(request: Request, token: str = Depends(getToken)):  # token=Cookie(default=None)):
+    group = {
+        "name" : "test",
+        "members": ["benedikt.erkner-sach", "admin"]
+    }
+    result = create_groups(token=token, groups= group)
+    return {result}
 
 
 
